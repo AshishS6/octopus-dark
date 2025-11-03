@@ -59,15 +59,157 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground font-body;
-    font-feature-settings: "kern" 1, "liga" 1;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    font-variant-ligatures: common-ligatures;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     cursor: none;
+    /* Smooth scrolling for depth transitions */
+    scroll-behavior: smooth;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    font-variant-ligatures: common-ligatures;
+    letter-spacing: -0.02em; /* Tighter letter spacing for modern look */
+    line-height: 1.1; /* Tighter line height for headings */
+  }
+
+  /* Enhanced typography for better readability */
+  p {
+    line-height: 1.7; /* More comfortable reading line height */
+    letter-spacing: 0.01em;
+  }
+
+  /* Large display text with better spacing */
+  h1 {
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  h2 {
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  h3 {
+    letter-spacing: -0.01em;
+    line-height: 1.15;
   }
 
   a, button {
     cursor: none;
+  }
+
+  /* Focus styles for accessibility - ocean-themed cyan glow */
+  *:focus-visible {
+    outline: 3px solid hsl(189 100% 60%);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Ocean-themed animations */
+  @keyframes ocean-wave {
+    0%, 100% {
+      transform: translateY(0) scaleY(1);
+    }
+    50% {
+      transform: translateY(-10px) scaleY(1.05);
+    }
+  }
+
+  @keyframes bubble-rise {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(-200px) translateX(20px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes plankton-drift {
+    0%, 100% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(10px, -10px);
+    }
+    50% {
+      transform: translate(-5px, 5px);
+    }
+    75% {
+      transform: translate(-10px, -5px);
+    }
+  }
+
+  @keyframes bio-glow {
+    0%, 100% {
+      opacity: 0.3;
+      box-shadow: 0 0 10px hsl(189 100% 60% / 0.4);
+    }
+    50% {
+      opacity: 0.9;
+      box-shadow: 0 0 20px hsl(189 100% 60% / 0.8);
+    }
+  }
+
+  @keyframes caustics-shift {
+    0%, 100% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+      opacity: 0.1;
+    }
+    25% {
+      transform: translate(20px, -10px) scale(1.1) rotate(5deg);
+      opacity: 0.15;
+    }
+    50% {
+      transform: translate(-10px, 10px) scale(1.2) rotate(-5deg);
+      opacity: 0.12;
+    }
+    75% {
+      transform: translate(10px, 20px) scale(1.05) rotate(3deg);
+      opacity: 0.14;
+    }
+  }
+
+  .animate-ocean-wave {
+    animation: ocean-wave 4s ease-in-out infinite;
+  }
+
+  .animate-bubble-rise {
+    animation: bubble-rise 5s ease-out infinite;
+  }
+
+  .animate-plankton-drift {
+    animation: plankton-drift 10s ease-in-out infinite;
+  }
+
+  .animate-bio-glow {
+    animation: bio-glow 3s ease-in-out infinite;
+  }
+
+  .animate-caustics {
+    animation: caustics-shift 12s ease-in-out infinite;
   }
 }

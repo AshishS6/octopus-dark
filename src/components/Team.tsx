@@ -9,24 +9,24 @@ const Team = () => {
       bio: "Digital banking platform for SMEs, startups, freelancers and more customers."
     },
     {
-      name: "Anandu KS",
-      role: "Web Developer",
-      bio: "Crafting beautiful and functional web experiences."
+      name: "Ashish S",
+      role: "Developer",
+      bio: "Crafting beautiful and functional experiences."
     },
     {
-      name: "Anoop R",
+      name: "Nibin N",
       role: "Visual Designer",
       bio: "Creating stunning visuals that tell your story."
     },
     {
-      name: "Jinesh AR",
-      role: "Web Developer",
+      name: "Ajmal S",
+      role: "Developer",
       bio: "Building robust and scalable solutions."
     },
     {
-      name: "Meera Sharin",
-      role: "Marketing Head",
-      bio: "Driving growth through strategic marketing."
+      name: "Rythwik M",
+      role: "Developer",
+      bio: "Building scalable Tech solutions."
     }
   ];
 

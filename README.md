@@ -1,73 +1,111 @@
-# Welcome to your Lovable project
+# Octopus Media - Creative Digital Agency
 
-## Project info
+A modern, immersive website featuring an underwater ocean theme with interactive animations and engaging user experience.
 
-**URL**: https://lovable.dev/projects/c44847c1-951c-418d-b0ab-bff23b9345b5
+## Features
 
-## How can I edit this code?
+- 🌊 **Immersive Underwater Experience**: Scroll-based depth system that transitions from surface to deep ocean
+- 🐙 **Animated Octopus Cursor**: Custom cursor with spring physics and hover states
+- 🎨 **Layered Ocean Backgrounds**: Parallax layers with particles, fish, corals, and bioluminescence
+- 📊 **Depth Meter**: Visual indicator showing current scroll depth
+- 🎭 **Smooth Animations**: Optimized 60 FPS animations with Framer Motion
+- 📱 **Responsive Design**: Mobile-friendly with touch device detection
+- ♿ **Accessibility**: Reduced motion support and keyboard navigation
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite 5
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Fonts**: Plus Jakarta Sans (headings) + Inter (body)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c44847c1-951c-418d-b0ab-bff23b9345b5) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 18+ (recommended: use [nvm](https://github.com/nvm-sh/nvm))
+- pnpm (recommended) or npm
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Install dependencies
+pnpm install
+# or
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Development
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```sh
+# Start development server
+pnpm dev
+# or
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Build
 
-**Use GitHub Codespaces**
+```sh
+# Build for production
+pnpm build
+# or
+npm run build
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Preview Production Build
 
-## What technologies are used for this project?
+```sh
+# Preview production build
+pnpm preview
+# or
+npm run preview
+```
 
-This project is built with:
+## Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+src/
+├── components/          # React components
+│   ├── layers/         # Ocean background layers (Surface, Mid, Deep)
+│   ├── ui/             # shadcn/ui components
+│   └── ...
+├── context/            # React context providers (DepthProvider)
+├── pages/              # Page components
+├── hooks/              # Custom React hooks
+└── lib/                # Utility functions
+```
 
-## How can I deploy this project?
+## Key Components
 
-Simply open [Lovable](https://lovable.dev/projects/c44847c1-951c-418d-b0ab-bff23b9345b5) and click on Share -> Publish.
+- **OctopusCursor**: Custom animated cursor with spring physics
+- **BackgroundController**: Manages ocean layers and particle system
+- **DepthProvider**: Provides scroll-based depth tracking
+- **OceanSurface/MidOcean/DeepOcean**: Layered background components
+- **Particles**: Canvas-based particle system for bubbles and plankton
 
-## Can I connect a custom domain to my Lovable project?
+## Performance Optimizations
 
-Yes, you can!
+- Code splitting with manual chunks
+- Lazy loading for below-the-fold components
+- Optimized canvas rendering (60 FPS)
+- GPU-accelerated animations
+- Reduced particle count on low-end devices
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Deployment
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Build the project and deploy the `dist` folder to your hosting provider:
+
+```sh
+pnpm build
+```
+
+The production build will be in the `dist` directory.
+
+## License
+
+Copyright © 2024 Octopus Media. All rights reserved.
