@@ -9,6 +9,22 @@ const WhoWeAre = () => {
 
   return (
     <section className="py-24 md:py-32 relative overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: 'center' }}
+        >
+          <source src="/animations/hero video.mp4" type="video/mp4" />
+        </video>
+        {/* Overlay for better content readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
+      </div>
+
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
