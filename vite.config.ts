@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => ({
             "@radix-ui/react-tabs",
             "@radix-ui/react-tooltip",
           ],
-          "lottie": ["lottie-react", "lottie-web"],
+          "lottie": ["lottie-react"],
         },
       },
     },
