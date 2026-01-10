@@ -6,14 +6,17 @@ const ClientsMarquee = () => {
   ];
 
   return (
-    <section className="py-24 md:py-32 bg-secondary/20 relative overflow-hidden">
+    <section className="py-12 md:py-16 bg-secondary/20 relative overflow-hidden">
       {/* Section Header */}
       <div className="container mx-auto px-6 lg:px-12 mb-16">
         <div className="text-center max-w-3xl mx-auto animate-fade-up">
           <span className="text-sm font-semibold text-primary uppercase tracking-wider">Trusted By</span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mt-4">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mt-4 mb-6">
             Our Clients
           </h2>
+          <p className="text-lg text-muted-foreground">
+            Brands and teams who trusted us to bring their vision to life.
+          </p>
         </div>
       </div>
 

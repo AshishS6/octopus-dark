@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { User } from "lucide-react";
+import AshishImg from "@/assets/Gemini_Generated_.png";
 
 const Team = () => {
   const teamMembers = [
@@ -11,6 +12,7 @@ const Team = () => {
     {
       name: "Ashish S",
       role: "Developer",
+      image: AshishImg,
       bio: "Crafting beautiful and functional experiences."
     },
     {
@@ -46,7 +48,10 @@ const Team = () => {
             Meet the Experts
           </h2>
           <p className="text-lg text-muted-foreground">
-            Talented professionals dedicated to bringing your vision to life.
+            A multidisciplinary team driven by curiosity, creativity, and problem-solving.
+          </p>
+          <p className="mt-4 text-muted-foreground/80">
+            Designers, developers, strategists, and thinkers — collaborating to build meaningful digital work.
           </p>
         </div>
 
@@ -61,14 +66,18 @@ const Team = () => {
               <CardContent className="p-0">
                 {/* Avatar */}
                 <div className="relative aspect-square bg-gradient-to-br from-primary/20 to-accent/20 overflow-hidden">
-                  {/* Icon placeholder */}
+                  {/* Icon or Image placeholder */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <User className="w-24 h-24 text-primary/30" />
+                    {member.image ? (
+                      <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-24 h-24 text-primary/30" />
+                    )}
                   </div>
-                  
+
                   {/* Hover overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
+
                   {/* Name and role on hover */}
                   <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                     <h3 className="text-xl font-heading font-bold text-foreground mb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">

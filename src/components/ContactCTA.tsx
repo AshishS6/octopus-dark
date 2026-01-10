@@ -14,7 +14,7 @@ const ContactCTA = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Basic validation
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill in all fields");
@@ -23,7 +23,7 @@ const ContactCTA = () => {
 
     // Success message
     toast.success("Message sent successfully! We'll get back to you soon.");
-    
+
     // Reset form
     setFormData({ name: "", email: "", message: "" });
   };
@@ -40,12 +40,12 @@ const ContactCTA = () => {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12 animate-fade-up">
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Get In Touch</span>
+            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Start Your Project</span>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mt-4 mb-6">
-              Start Your Project
+              Let’s Build Something That Actually Works.
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Ready to transform your ideas into reality? Let's collaborate and create something amazing together.
+              Tell us about your idea, challenge, or goal — we’ll help you shape it into something impactful, scalable, and effective.
             </p>
           </div>
 
@@ -104,6 +104,10 @@ const ContactCTA = () => {
                 Send Message
                 <Send className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
+              {/* Micro-Trust Copy */}
+              <p className="mt-4 text-sm text-muted-foreground/60">
+                No pressure. No templates. Just honest conversations and thoughtful solutions.
+              </p>
             </div>
           </form>
 

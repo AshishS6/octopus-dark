@@ -8,15 +8,15 @@ import HeroFloatingElements from "./HeroFloatingElements";
 
 const Hero = () => {
   const { depth } = useDepth();
-  
+
   // 3D transforms based on scroll depth
   const textTranslateZ = useTransform(depth, [0, 0.3], [0, -50]);
   const textOpacity = useTransform(depth, [0, 0.3], [1, 0.7]);
   const parallaxY = useTransform(depth, [0, 0.3], [0, 30]);
 
   return (
-    <section 
-      id="home" 
+    <section
+      id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{
         perspective: "1000px",
@@ -25,10 +25,10 @@ const Hero = () => {
     >
       {/* Enhanced Ocean Surface Layer with Caustics */}
       <HeroCaustics />
-      
+
       {/* Floating Bubbles */}
       <HeroBubbles />
-      
+
       {/* Floating Sea Elements */}
       <HeroFloatingElements />
 
@@ -170,85 +170,29 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
-            An Essential Aspect of{" "}
-            <motion.span
-              className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent relative inline-block"
-              style={{
-                transform: `translateZ(${useTransform(depth, [0, 0.3], [0, -75])}px)`,
-              }}
-              whileHover={{
-                scale: 1.05,
-                transition: { duration: 0.3 },
-              }}
-            >
-              Creativity
-              {/* Octopus icon with 3D effect */}
-              <motion.div
-                className="absolute -bottom-2 left-1/2 -translate-x-1/2"
-                style={{
-                  transform: `translateZ(${useTransform(depth, [0, 0.3], [0, -100])}px)`,
-                }}
-                animate={{
-                  y: [0, -5, 0],
-                  rotate: [0, 5, -5, 0],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <svg
-                  width="40"
-                  height="40"
-                  viewBox="0 0 40 40"
-                  className="text-primary"
-                >
-                  <circle cx="20" cy="15" r="8" fill="currentColor" opacity="0.8" />
-                  <circle cx="15" cy="12" r="2" fill="hsl(6 93% 71%)" />
-                  <circle cx="25" cy="12" r="2" fill="hsl(6 93% 71%)" />
-                  {[...Array(8)].map((_, i) => (
-                    <motion.line
-                      key={i}
-                      x1={20}
-                      y1={23}
-                      x2={20 + Math.cos((i * Math.PI) / 4) * 6}
-                      y2={23 + Math.sin((i * Math.PI) / 4) * 6}
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      opacity="0.6"
-                      animate={{
-                        pathLength: [0.5, 1, 0.5],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        delay: i * 0.1,
-                      }}
-                    />
-                  ))}
-                </svg>
-              </motion.div>
-            </motion.span>{" "}
-            is Not Being Afraid to Fail
+            Creativity That Goes{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent relative inline-block">
+              Deeper
+            </span>{" "}
+            Than Design
           </motion.h1>
 
-          {/* Subheadline with parallax */}
-          <motion.p
-            className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto"
-            style={{
-              transform: `translateZ(${useTransform(depth, [0, 0.3], [0, -15])}px)`,
-            }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            Transform your brand with innovative digital solutions. We create compelling experiences that connect, engage, and inspire.
-          </motion.p>
+          {/* Dynamic Subheadline Rotation */}
+          <div className="h-8 md:h-10 mb-10 overflow-hidden relative">
+            <motion.div
+              animate={{ y: [0, -40, -80, 0] }}
+              transition={{ duration: 9, repeat: Infinity, times: [0, 0.33, 0.66, 1], ease: "circIn" }}
+              className="flex flex-col items-center"
+            >
+              <p className="text-lg md:text-xl text-muted-foreground h-10 flex items-center">Branding that converts</p>
+              <p className="text-lg md:text-xl text-muted-foreground h-10 flex items-center">Websites that scale startups</p>
+              <p className="text-lg md:text-xl text-muted-foreground h-10 flex items-center">Campaigns that drive growth</p>
+            </motion.div>
+          </div>
 
           {/* CTAs with 3D hover effects */}
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             style={{
               transform: `translateZ(${useTransform(depth, [0, 0.3], [0, -40])}px)`,
             }}
@@ -256,51 +200,59 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
-            <motion.div
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground group relative overflow-hidden"
-              >
-                <span className="relative z-10 flex items-center">
-                  Start Your Project
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-                {/* Animated shine effect */}
+            <div className="flex flex-col items-center gap-6">
+              <div className="flex gap-4">
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  initial={{ x: "-100%" }}
-                  animate={{ x: "200%" }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatDelay: 3,
-                    ease: "easeInOut",
-                  }}
-                />
-              </Button>
-            </motion.div>
-            <motion.div
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-primary/30 hover:bg-primary/10 backdrop-blur-sm"
-              >
-                View Our Work
-              </Button>
-            </motion.div>
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  <Button
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground group relative overflow-hidden"
+                  >
+                    <span className="relative z-10 flex items-center">
+                      Start Your Project
+                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                    {/* Animated shine effect */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      initial={{ x: "-100%" }}
+                      animate={{ x: "200%" }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatDelay: 3,
+                        ease: "easeInOut",
+                      }}
+                    />
+                  </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-primary/30 hover:bg-primary/10 backdrop-blur-sm"
+                  >
+                    View Our Work
+                  </Button>
+                </motion.div>
+              </div>
+              {/* Micro Proof */}
+              <p className="text-sm text-muted-foreground/80 font-medium">
+                Trusted by 50+ brands • 150+ projects delivered
+              </p>
+            </div>
           </motion.div>
 
           {/* Stats with 3D counter effect */}
           <motion.div
-            className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-16"
+            className="grid grid-cols-3 gap-8 max-w-3xl mx-auto mt-16 items-start"
             style={{
               transform: `translateZ(${useTransform(depth, [0, 0.3], [0, -25])}px)`,
             }}
@@ -309,9 +261,9 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.8 }}
           >
             {[
-              { number: "150+", label: "Projects Delivered" },
-              { number: "50+", label: "Happy Clients" },
-              { number: "5+", label: "Years Experience" },
+              { main: "150+", sub: "projects delivered" },
+              { main: "Startups", sub: "& growing brands" },
+              { main: "Strategy", sub: "Design • Technology" },
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -320,7 +272,7 @@ const Hero = () => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <motion.div
-                  className="text-3xl md:text-4xl font-heading font-bold text-primary mb-2"
+                  className="text-lg md:text-xl font-heading font-bold text-primary mb-1"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{
@@ -330,13 +282,22 @@ const Hero = () => {
                     delay: 1 + i * 0.1,
                   }}
                 >
-                  {stat.number}
+                  {stat.main}
                 </motion.div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-xs md:text-sm text-muted-foreground px-2">{stat.sub}</div>
               </motion.div>
             ))}
           </motion.div>
-        </div>
+
+          {/* Optional animated line */}
+          <motion.div
+            className="mt-12 text-sm text-muted-foreground/60 italic"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 1 }}
+          >
+            “From the surface to the deep — we build brands that last.”
+          </motion.div>        </div>
       </motion.div>
 
       {/* Enhanced Scroll Indicator */}

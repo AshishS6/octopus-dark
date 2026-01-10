@@ -42,7 +42,7 @@ const Footer = () => {
               Octopus<span className="text-accent">Media</span>
             </h3>
             <p className="text-muted-foreground mb-6">
-              Creating innovative digital solutions that transform brands and drive growth.
+              Octopus Media — A creative studio inspired by depth, adaptability, and imagination.
             </p>
             <div className="flex gap-3">
               {socialLinks.map((social, index) => (

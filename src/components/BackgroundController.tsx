@@ -8,13 +8,32 @@ import Particles from "./Particles";
 interface BackgroundControllerProps {
   className?: string;
   particleDensity?: number;
+  depthToken?: "depth-0" | "depth-1" | "depth-2" | "depth-3";
+  reducedMotion?: boolean;
 }
 
 const BackgroundController = ({
   className = "",
   particleDensity = 1,
+  depthToken = "depth-0",
+  reducedMotion = false,
 }: BackgroundControllerProps) => {
   const { depth } = useDepth();
+
+  // Map depth token to density and layer opacity
+  const getTokenSettings = () => {
+    if (reducedMotion) return { density: 0, opacity: 0.2 };
+
+    switch (depthToken) {
+      case "depth-0": return { density: 1, opacity: 1 };
+      case "depth-1": return { density: 0.5, opacity: 0.8 };
+      case "depth-2": return { density: 0.2, opacity: 0.6 };
+      case "depth-3": return { density: 0.05, opacity: 0.4 };
+      default: return { density: 1, opacity: 1 };
+    }
+  };
+
+  const settings = getTokenSettings();
 
   // Overall background gradient that shifts with depth
   const backgroundGradient = useTransform(
@@ -45,16 +64,17 @@ const BackgroundController = ({
         className="absolute inset-0"
         style={{
           background: backgroundGradient,
+          opacity: settings.opacity
         }}
       />
 
-      {/* Layer components */}
+      {/* Layer components - Conditional rendering based on depth/motion could be added here for perf */}
       <OceanSurface />
       <MidOcean />
       <DeepOcean />
 
       {/* Particles layer */}
-      <Particles density={particleDensity} />
+      {!reducedMotion && <Particles density={settings.density} />}
     </div>
   );
 };

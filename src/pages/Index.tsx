@@ -22,39 +22,32 @@ const SectionLoader = () => (
   </div>
 );
 
+// Purpose: Prove credibility through real-world outcomes
+
 const Index = () => {
   return (
-    <DepthProvider>
-      <div className="min-h-screen">
-        <OctopusCursor enabled={true} />
-        <BackgroundController particleDensity={1} />
-        <DepthMeter />
-        <Navigation />
-        <Hero />
-        {/* Lazy loaded sections with suspense */}
-        <Suspense fallback={<SectionLoader />}>
-          <WhoWeAre />
-        </Suspense>
-        <Suspense fallback={<SectionLoader />}>
-          <Services />
-        </Suspense>
-        <Suspense fallback={<SectionLoader />}>
-          <WorkSamples />
-        </Suspense>
-        <Suspense fallback={<SectionLoader />}>
-          <ClientsMarquee />
-        </Suspense>
-        <Suspense fallback={<SectionLoader />}>
-          <Team />
-        </Suspense>
-        <Suspense fallback={<SectionLoader />}>
-          <ContactCTA />
-        </Suspense>
-        <Suspense fallback={<SectionLoader />}>
-          <Footer />
-        </Suspense>
-      </div>
-    </DepthProvider>
+    <div className="min-h-screen">
+      <Hero />
+      {/* Lazy loaded sections with suspense */}
+      <Suspense fallback={<SectionLoader />}>
+        <WhoWeAre />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <Services />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <WorkSamples />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <ClientsMarquee />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <Team />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <ContactCTA />
+      </Suspense>
+    </div>
   );
 };
 

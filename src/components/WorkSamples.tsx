@@ -16,8 +16,8 @@ const WorkSamples = () => {
     { id: 6, title: "Brand Guidelines", category: "branding", image: "bg-gradient-to-br from-accent/70 to-primary/70" },
   ];
 
-  const filteredProjects = filter === "all" 
-    ? projects 
+  const filteredProjects = filter === "all"
+    ? projects
     : projects.filter(project => project.category === filter);
 
   return (
@@ -30,7 +30,7 @@ const WorkSamples = () => {
             Work Samples
           </h2>
           <p className="text-lg text-muted-foreground">
-            Explore our latest projects and see how we transform ideas into reality.
+            A glimpse into how we translate ideas into impactful digital experiences.
           </p>
         </div>
 
@@ -60,7 +60,7 @@ const WorkSamples = () => {
               <div className={`aspect-[4/3] ${project.image} relative overflow-hidden`}>
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
+
                 {/* Content on hover */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6 translate-y-6 group-hover:translate-y-0 transition-transform duration-500">
                   <span className="text-xs font-semibold text-primary uppercase tracking-wider mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
