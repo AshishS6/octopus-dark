@@ -1,8 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import BackgroundController from "@/components/BackgroundController";
-import OctopusCursor from "@/components/OctopusCursor";
-import DepthMeter from "@/components/DepthMeter";
 import Footer from "@/components/Footer";
 import { DepthProvider } from "@/context/DepthProvider";
 import { useEffect, useState } from "react";
@@ -33,13 +31,11 @@ const MainLayout = () => {
     return (
         <DepthProvider>
             <div className="min-h-screen flex flex-col relative">
-                <OctopusCursor enabled={!reducedMotion} />
                 <BackgroundController
                     particleDensity={1}
                     depthToken={depthToken}
                     reducedMotion={reducedMotion}
                 />
-                <DepthMeter />
 
                 <Navigation />
 

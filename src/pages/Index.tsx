@@ -1,9 +1,6 @@
 import { lazy, Suspense } from "react";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
-import OctopusCursor from "@/components/OctopusCursor";
-import BackgroundController from "@/components/BackgroundController";
-import DepthMeter from "@/components/DepthMeter";
 import { DepthProvider } from "@/context/DepthProvider";
 
 // Lazy load below-the-fold components for better initial load performance
