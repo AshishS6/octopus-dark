@@ -67,8 +67,15 @@ All colors MUST be HSL.
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    /* Smooth scrolling for depth transitions */
-    scroll-behavior: smooth;
+    /* Lenis handles smooth scroll — disable native */
+    scroll-behavior: auto;
+  }
+
+  /* Hide native cursor on pointer devices — custom cursor takes over */
+  @media (pointer: fine) {
+    *, *::before, *::after {
+      cursor: none !important;
+    }
   }
 
   h1,

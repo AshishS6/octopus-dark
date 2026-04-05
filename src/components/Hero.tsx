@@ -1,7 +1,10 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { useRef, useState } from "react";
+import { motion, useScroll, useTransform, useSpring, useReducedMotion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Play, X } from "lucide-react";
 import { Link } from "react-router-dom";
+
+// Pexels: "Time Lapse of Working in Home" by Sandrin
+const REEL_VIDEO_SRC = "https://videos.pexels.com/video-files/12913395/12913395-uhd_1440_2560_30fps.mp4";
 
 const MARQUEE_ITEMS = [
   "Design", "Development", "Strategy", "Branding",
@@ -15,10 +18,49 @@ const HEADLINE_LINES = ["We design", "and build things", "people love."];
 // Strong expo ease — more intentional than CSS defaults
 const EXPO = [0.16, 1, 0.3, 1] as const;
 
+// Full-screen video modal
+const VideoModal = ({ src, onClose }: { src: string; onClose: () => void }) => (
+  <AnimatePresence>
+    <motion.div
+      className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/90 backdrop-blur-md"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="relative w-full max-w-5xl mx-4"
+        initial={{ scale: 0.94, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.94, opacity: 0 }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <video
+          src={src}
+          className="w-full rounded-xl"
+          autoPlay
+          controls
+          style={{ maxHeight: "80vh" }}
+        />
+        <button
+          onClick={onClose}
+          className="absolute -top-10 right-0 text-white/60 hover:text-white flex items-center gap-1.5 text-sm"
+          style={{ transition: "color 200ms ease-out" }}
+        >
+          <X className="w-4 h-4" /> Close
+        </button>
+      </motion.div>
+    </motion.div>
+  </AnimatePresence>
+);
+
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const reelRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const [modalOpen, setModalOpen] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -56,24 +98,36 @@ const Hero = () => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Ambient background video */}
+      {!prefersReducedMotion && (
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            style={{ opacity: 0.18 }}
+            src={REEL_VIDEO_SRC}
+          />
+          {/* Gradient overlays to blend edges and keep text readable */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse at 60% 40%, transparent 20%, hsl(0 0% 2%) 75%), linear-gradient(to bottom, hsl(0 0% 2% / 0.6) 0%, transparent 30%, transparent 70%, hsl(0 0% 2%) 100%)",
+            }}
+          />
+        </div>
+      )}
+
       {/* Grain texture */}
       <div
-        className="absolute inset-0 z-0 opacity-[0.04] pointer-events-none animate-grain"
+        className="absolute inset-0 z-0 opacity-[0.04] pointer-events-none"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         }}
       />
-
-      {/* Ambient glow */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div
-          className="absolute top-[20%] left-[15%] w-[55vw] h-[55vw] max-w-[680px] max-h-[680px] rounded-full animate-pulse-glow"
-          style={{
-            background: "radial-gradient(circle, hsl(0 0% 100% / 0.045), transparent 65%)",
-            filter: "blur(80px)",
-          }}
-        />
-      </div>
 
       {/* Main content */}
       <motion.div
@@ -183,7 +237,22 @@ const Hero = () => {
                     }
               }
             >
-              <div className="w-full aspect-square rounded-2xl border border-white/8 bg-white/[0.025] backdrop-blur-xl overflow-hidden relative cursor-pointer group">
+              <div
+                data-cursor="view"
+                data-cursor-label="Play"
+                onClick={() => setModalOpen(true)}
+                className="w-full aspect-square rounded-2xl border border-white/8 bg-white/[0.025] backdrop-blur-xl overflow-hidden relative cursor-pointer group"
+              >
+                {/* Looping silent video preview inside the card */}
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover object-center opacity-40 group-hover:opacity-55 transition-opacity duration-500"
+                  src={REEL_VIDEO_SRC}
+                />
+
                 {/* Abstract background pattern */}
                 <div
                   className="absolute inset-0"
@@ -280,6 +349,11 @@ const Hero = () => {
         </div>
         <span className="text-[9px] uppercase tracking-[0.3em] text-white/20">Scroll</span>
       </motion.div>
+
+      {/* Video modal */}
+      {modalOpen && (
+        <VideoModal src={REEL_VIDEO_SRC} onClose={() => setModalOpen(false)} />
+      )}
     </section>
   );
 };

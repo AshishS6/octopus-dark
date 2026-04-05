@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, ArrowUpRight } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { getLenis } from "@/components/SmoothScroll";
 
 const NAV_LINKS = [
   { label: "Work", href: "/work" },
@@ -18,11 +19,54 @@ const SOCIAL_LINKS = [
 
 const EXPO = [0.16, 1, 0.3, 1] as const;
 
+const scrollToHash = (hash: string) => {
+  const id = hash.replace("#", "");
+  const el = document.getElementById(id);
+  if (!el) return;
+  const lenis = getLenis();
+  if (lenis) {
+    lenis.scrollTo(el, { offset: -80, duration: 1.2 });
+  } else {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const prefersReducedMotion = useReducedMotion();
+
+  // After navigating to "/", wait for render then scroll to hash
+  useEffect(() => {
+    if (location.pathname === "/" && location.hash) {
+      const id = location.hash.replace("#", "");
+      // Small delay lets the page mount before we attempt scroll
+      const t = setTimeout(() => scrollToHash(location.hash), 120);
+      return () => clearTimeout(t);
+    }
+  }, [location]);
+
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent, href: string) => {
+      const isHashLink = href.startsWith("/#");
+      if (!isHashLink) return; // let React Router handle normal links
+
+      e.preventDefault();
+      const hash = href.slice(1); // "#team", "#contact"
+
+      if (location.pathname === "/") {
+        // Already on home — just scroll
+        scrollToHash(hash);
+      } else {
+        // Navigate to "/" with hash; useEffect above will scroll after mount
+        navigate("/" + hash);
+      }
+      setIsOpen(false);
+    },
+    [location.pathname, navigate]
+  );
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
@@ -65,16 +109,19 @@ const Navigation = () => {
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-8">
               {NAV_LINKS.map((link) => {
-                const isActive = location.pathname === link.href;
+                const isHashLink = link.href.startsWith("/#");
+                const isActive = isHashLink
+                  ? location.hash === link.href.slice(1)
+                  : location.pathname === link.href;
                 return (
                   <Link
                     key={link.label}
                     to={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
                     className="relative text-sm font-medium text-white/50 hover:text-white/90"
                     style={{ transition: "color 200ms ease-out" }}
                   >
                     {link.label}
-                    {/* Active dot */}
                     {isActive && (
                       <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-electric" />
                     )}
@@ -165,7 +212,7 @@ const Navigation = () => {
                   >
                     <Link
                       to={link.href}
-                      onClick={() => setIsOpen(false)}
+                      onClick={(e) => handleNavClick(e, link.href)}
                       className="group flex items-baseline gap-4 py-3 border-b border-white/5 last:border-0"
                     >
                       <span className="font-mono text-[11px] text-white/20 w-6 tabular-nums">

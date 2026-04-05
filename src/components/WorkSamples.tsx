@@ -79,6 +79,8 @@ const ProjectRow = ({
       {/* Project image */}
       <motion.div
         ref={containerRef}
+        data-cursor="view"
+        data-cursor-label="View →"
         className="relative w-full overflow-hidden rounded-xl cursor-pointer mb-6"
         style={
           prefersReducedMotion

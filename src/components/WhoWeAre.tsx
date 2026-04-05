@@ -1,11 +1,66 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 
 const STATS = [
-  { value: "150+", label: "Projects Delivered" },
-  { value: "7", label: "Years of Practice" },
-  { value: "99%", label: "Client Retention" },
+  { num: 150, suffix: "+", label: "Projects Delivered" },
+  { num: 7,   suffix: "",  label: "Years of Practice" },
+  { num: 99,  suffix: "%", label: "Client Retention" },
 ];
+
+// Animates from 0 → target once inView
+const CountUp = ({
+  target,
+  suffix,
+  inView,
+  delay = 0,
+}: {
+  target: number;
+  suffix: string;
+  inView: boolean;
+  delay?: number;
+}) => {
+  const prefersReducedMotion = useReducedMotion();
+  const [count, setCount] = useState(0);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
+  const duration = 1400; // ms
+
+  useEffect(() => {
+    if (!inView || prefersReducedMotion) {
+      if (prefersReducedMotion) setCount(target);
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      const animate = (timestamp: number) => {
+        if (!startRef.current) startRef.current = timestamp;
+        const elapsed = timestamp - startRef.current;
+        const progress = Math.min(elapsed / duration, 1);
+        // expo ease-out
+        const eased = 1 - Math.pow(2, -10 * progress);
+        setCount(Math.floor(eased * target));
+        if (progress < 1) {
+          rafRef.current = requestAnimationFrame(animate);
+        } else {
+          setCount(target);
+        }
+      };
+      rafRef.current = requestAnimationFrame(animate);
+    }, delay * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      startRef.current = null;
+    };
+  }, [inView, target, delay, prefersReducedMotion]);
+
+  return (
+    <span>
+      {count}
+      {suffix}
+    </span>
+  );
+};
 
 const EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -130,8 +185,13 @@ const WhoWeAre = () => {
                   ease: EXPO,
                 }}
               >
-                <div className="font-display text-[3.5rem] font-normal text-white leading-none mb-2 tracking-tight">
-                  {stat.value}
+                <div className="font-display text-[3.5rem] font-normal text-white leading-none mb-2 tracking-tight tabular-nums">
+                  <CountUp
+                    target={stat.num}
+                    suffix={stat.suffix}
+                    inView={statsInView}
+                    delay={0.1 + i * 0.12}
+                  />
                 </div>
                 <div className="text-xs text-white/30 uppercase tracking-[0.2em] font-light">
                   {stat.label}

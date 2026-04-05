@@ -2,6 +2,8 @@ import { Outlet, useLocation } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import BackgroundController from "@/components/BackgroundController";
 import Footer from "@/components/Footer";
+import SmoothScroll from "@/components/SmoothScroll";
+import CustomCursor from "@/components/CustomCursor";
 import { DepthProvider } from "@/context/DepthProvider";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +32,8 @@ const MainLayout = () => {
 
     return (
         <DepthProvider>
+          <SmoothScroll>
+            <CustomCursor />
             <div className="min-h-screen flex flex-col relative">
                 <BackgroundController
                     particleDensity={1}
@@ -58,6 +62,7 @@ const MainLayout = () => {
                     </Button>
                 </div>
             </div>
+          </SmoothScroll>
         </DepthProvider>
     );
 };
