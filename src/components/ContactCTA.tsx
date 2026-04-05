@@ -1,149 +1,151 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useState, useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { Send } from "lucide-react";
+
+const EXPO = [0.16, 1, 0.3, 1] as const;
 
 const ContactCTA = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: ""
-  });
+  const [email, setEmail] = useState("");
+  const [focused, setFocused] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: "-80px" });
+  const prefersReducedMotion = useReducedMotion();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.message) {
-      toast.error("Please fill in all fields");
+    if (!email.trim()) {
+      toast.error("Please enter your email.");
       return;
     }
-
-    // Success message
-    toast.success("Message sent successfully! We'll get back to you soon.");
-
-    // Reset form
-    setFormData({ name: "", email: "", message: "" });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Please enter a valid email.");
+      return;
+    }
+    toast.success("Got it. We'll be in touch shortly.");
+    setEmail("");
   };
 
   return (
-    <section id="contact" className="py-24 md:py-32 relative overflow-hidden bg-gradient-to-b from-background to-secondary/30">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary rounded-full blur-[100px] animate-float"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent rounded-full blur-[100px] animate-float" style={{ animationDelay: "3s" }}></div>
+    <section
+      id="contact"
+      ref={sectionRef}
+      className="py-32 md:py-48 relative bg-background overflow-hidden"
+    >
+      {/* Ambient glow */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70vw] h-[50vw] max-w-[800px] max-h-[500px]"
+          style={{
+            background: "radial-gradient(ellipse at 50% 100%, hsl(0 0% 100% / 0.04), transparent 65%)",
+            filter: "blur(60px)",
+          }}
+        />
       </div>
 
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12 animate-fade-up">
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Start Your Project</span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mt-4 mb-6">
-              Let’s Build Something That Actually Works.
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Tell us about your idea, challenge, or goal — we’ll help you shape it into something impactful, scalable, and effective.
-            </p>
+        <div className="max-w-4xl">
+
+          {/* Label */}
+          <div className="overflow-hidden mb-8">
+            <motion.span
+              className="font-mono text-[11px] text-white/25 uppercase tracking-[0.25em] block"
+              initial={prefersReducedMotion ? {} : { y: "110%", opacity: 0 }}
+              animate={inView ? { y: "0%", opacity: 1 } : {}}
+              transition={{ duration: 0.6, ease: EXPO }}
+            >
+              Let's talk
+            </motion.span>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium text-foreground">
-                  Your Name
-                </label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="bg-card border-border focus:border-primary"
-                />
+          {/* Headline */}
+          <div className="space-y-0 mb-14">
+            {["Ready to build", "something?"].map((line, i) => (
+              <div key={i} className="overflow-hidden">
+                <motion.h2
+                  className="font-display font-normal text-[clamp(2.8rem,8vw,7rem)] leading-[1.0] text-white"
+                  initial={prefersReducedMotion ? {} : { y: "108%", opacity: 0 }}
+                  animate={inView ? { y: "0%", opacity: 1 } : {}}
+                  transition={{ duration: 0.85, delay: 0.08 + i * 0.1, ease: EXPO }}
+                >
+                  {i === 1 ? (
+                    <>
+                      something<span className="text-white/25">?</span>
+                    </>
+                  ) : (
+                    line
+                  )}
+                </motion.h2>
               </div>
+            ))}
+          </div>
 
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-foreground">
-                  Your Email
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="john@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="bg-card border-border focus:border-primary"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="message" className="text-sm font-medium text-foreground">
-                Your Message
-              </label>
-              <Textarea
-                id="message"
-                placeholder="Tell us about your project..."
-                rows={6}
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="bg-card border-border focus:border-primary resize-none"
-              />
-            </div>
-
-            <div className="text-center">
-              <Button
-                type="submit"
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground group min-w-[200px]"
+          {/* Email input row */}
+          <motion.div
+            initial={prefersReducedMotion ? {} : { opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.3, ease: EXPO }}
+          >
+            <form onSubmit={handleSubmit} className="max-w-xl">
+              <div
+                className="relative flex items-center gap-4"
+                style={{
+                  borderBottom: `1px solid ${focused ? "hsl(0 0% 100% / 0.3)" : "hsl(0 0% 100% / 0.12)"}`,
+                  transition: "border-color 200ms ease-out",
+                }}
               >
-                Send Message
-                <Send className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              {/* Micro-Trust Copy */}
-              <p className="mt-4 text-sm text-muted-foreground/60">
-                No pressure. No templates. Just honest conversations and thoughtful solutions.
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setFocused(false)}
+                  placeholder="your@email.com"
+                  className="flex-1 bg-transparent text-white/75 placeholder:text-white/20 text-lg md:text-xl font-light py-5 outline-none"
+                  aria-label="Your email address"
+                />
+                <motion.button
+                  type="submit"
+                  className="flex items-center gap-2 text-white/35 hover:text-white py-5 pl-4 shrink-0"
+                  style={{ transition: "color 200ms ease-out" }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <span className="text-xs uppercase tracking-widest font-medium">Send</span>
+                  <ArrowRight className="w-4 h-4" />
+                </motion.button>
+              </div>
+              <p className="mt-4 text-xs text-white/20 font-light">
+                No templates. No pressure. Just an honest conversation.
               </p>
-            </div>
-          </form>
+            </form>
+          </motion.div>
 
-          {/* Contact Info */}
-          <div className="grid md:grid-cols-3 gap-8 mt-16 animate-fade-up" style={{ animationDelay: "0.4s" }}>
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h4 className="font-semibold text-foreground mb-1">Email</h4>
-              <p className="text-sm text-muted-foreground">hello@octopusmedia.com</p>
+          {/* Alternative contact */}
+          <motion.div
+            className="mt-16 flex flex-col sm:flex-row gap-10 sm:gap-16"
+            initial={prefersReducedMotion ? {} : { opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.45, ease: "easeOut" }}
+          >
+            <div>
+              <div className="font-mono text-[10px] text-white/20 uppercase tracking-widest mb-2">Email</div>
+              <a
+                href="mailto:hello@octopus.studio"
+                className="text-sm text-white/45 hover:text-white/80"
+                style={{ transition: "color 200ms ease-out" }}
+              >
+                hello@octopus.studio
+              </a>
             </div>
-
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-              </div>
-              <h4 className="font-semibold text-foreground mb-1">Phone</h4>
-              <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
+            <div>
+              <div className="font-mono text-[10px] text-white/20 uppercase tracking-widest mb-2">Based in</div>
+              <span className="text-sm text-white/45">Global · Remote-first</span>
             </div>
-
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <h4 className="font-semibold text-foreground mb-1">Location</h4>
-              <p className="text-sm text-muted-foreground">San Francisco, CA</p>
+            <div>
+              <div className="font-mono text-[10px] text-white/20 uppercase tracking-widest mb-2">Response time</div>
+              <span className="text-sm text-white/45">Within 24 hours</span>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

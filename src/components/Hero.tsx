@@ -1,186 +1,285 @@
-import { ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { motion, useTransform } from "framer-motion";
-import { useDepth } from "@/context/DepthProvider";
+import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
+import { ArrowRight, Play } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const MARQUEE_ITEMS = [
+  "Design", "Development", "Strategy", "Branding",
+  "Motion", "Web Apps", "Systems", "Identity",
+  "Design", "Development", "Strategy", "Branding",
+  "Motion", "Web Apps", "Systems", "Identity",
+];
+
+const HEADLINE_LINES = ["We design", "and build things", "people love."];
+
+// Strong expo ease — more intentional than CSS defaults
+const EXPO = [0.16, 1, 0.3, 1] as const;
 
 const Hero = () => {
-  const { depth } = useDepth();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const reelRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
-  // Subtle 3D transforms based on scroll depth
-  const textTranslateZ = useTransform(depth, [0, 0.3], [0, -20]);
-  const textOpacity = useTransform(depth, [0, 0.3], [1, 0.4]);
-  const parallaxY = useTransform(depth, [0, 0.3], [0, 50]);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Scroll-driven parallax — only when motion is OK
+  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, 60]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+
+  // Spring-based mouse tracking for the reel card (decorative — right place for springs)
+  const rawX = useSpring(0, { stiffness: 120, damping: 28 });
+  const rawY = useSpring(0, { stiffness: 120, damping: 28 });
+  const reelRotateX = useTransform(rawY, [-0.5, 0.5], [5, -5]);
+  const reelRotateY = useTransform(rawX, [-0.5, 0.5], [-5, 5]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (prefersReducedMotion || !reelRef.current) return;
+    const rect = reelRef.current.getBoundingClientRect();
+    rawX.set((e.clientX - rect.left - rect.width / 2) / rect.width);
+    rawY.set((e.clientY - rect.top - rect.height / 2) / rect.height);
+  };
+
+  const handleMouseLeave = () => {
+    rawX.set(0);
+    rawY.set(0);
+  };
 
   return (
     <section
+      ref={containerRef}
       id="home"
-      className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-hidden bg-background"
-      style={{
-        perspective: "1000px",
-        transformStyle: "preserve-3d",
-      }}
+      className="relative min-h-[100dvh] w-full flex flex-col overflow-hidden bg-background"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
-      {/* Animated Grain Overlay for Texture */}
+      {/* Grain texture */}
       <div
-        className="absolute inset-0 z-0 opacity-[0.05] mix-blend-screen pointer-events-none animate-grain"
+        className="absolute inset-0 z-0 opacity-[0.04] pointer-events-none animate-grain"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         }}
-      ></div>
+      />
 
-      {/* Premium Minimalist Background Pulse Glow */}
-      <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
+      {/* Ambient glow */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <div
-          className="w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] rounded-full animate-pulse-glow"
+          className="absolute top-[20%] left-[15%] w-[55vw] h-[55vw] max-w-[680px] max-h-[680px] rounded-full animate-pulse-glow"
           style={{
-            background: "radial-gradient(circle, hsl(0 0% 100% / 0.08), transparent 70%)",
+            background: "radial-gradient(circle, hsl(0 0% 100% / 0.045), transparent 65%)",
             filter: "blur(80px)",
           }}
         />
       </div>
 
-      {/* Content with 3D Effects */}
+      {/* Main content */}
       <motion.div
-        className="relative z-10 container mx-auto px-6 lg:px-12 pt-20"
-        style={{
-          y: parallaxY,
-          opacity: textOpacity,
-          transformStyle: "preserve-3d",
-          willChange: "transform, opacity",
-        }}
+        className="relative z-10 flex-1 flex items-center"
+        style={
+          prefersReducedMotion
+            ? {}
+            : { y: contentY, opacity: contentOpacity, willChange: "transform, opacity" }
+        }
       >
-        <div className="max-w-5xl mx-auto text-center">
-          {/* Badge */}
-          <div className="text-mask mb-8 inline-block">
-            <motion.div
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md animate-mask-up"
-              style={{
-                transform: `translateZ(${useTransform(depth, [0, 0.3], [0, -10])}px)`,
-                animationDelay: "0.1s"
-              }}
-            >
-              <Sparkles className="w-4 h-4 text-white/50" />
-              <span className="text-xs font-medium tracking-[0.2em] text-white/80 uppercase">
-                Premium Digital Agency
-              </span>
-            </motion.div>
-          </div>
+        <div className="container mx-auto px-6 lg:px-12 pt-28 pb-20">
+          <div className="grid lg:grid-cols-[1fr_280px] xl:grid-cols-[1fr_300px] gap-16 lg:gap-12 items-start">
 
-          {/* Headline with Mask Effect */}
-          <h1
-            className="text-6xl md:text-8xl lg:text-[7.5rem] font-heading font-medium mb-8 leading-[1.02] tracking-tighter text-white"
-            style={{
-              transformStyle: "preserve-3d",
-              willChange: "transform",
-            }}
-          >
-            <span className="text-mask inline-block pb-2">
-              <span className="animate-mask-up block" style={{ animationDelay: "0.3s" }}>
-                Digital Excellence,
-              </span>
-            </span>
-            <br />
-            <span className="text-mask inline-block">
-              <span className="animate-mask-up block text-white/50" style={{ animationDelay: "0.45s" }}>
-                Engineered.
-              </span>
-            </span>
-          </h1>
+            {/* Left: Headline block */}
+            <div className="space-y-10">
+              {/* Display headline — DM Serif Display */}
+              <h1 className="font-display font-normal text-[clamp(3.2rem,8.5vw,7.5rem)] leading-[1.02] tracking-[-0.01em] text-white">
+                {HEADLINE_LINES.map((line, i) => (
+                  <span key={i} className="block overflow-hidden">
+                    <motion.span
+                      className="block"
+                      initial={prefersReducedMotion ? {} : { y: "110%", opacity: 0 }}
+                      animate={{ y: "0%", opacity: 1 }}
+                      transition={{
+                        duration: 0.9,
+                        delay: 0.25 + i * 0.11,
+                        ease: EXPO,
+                      }}
+                    >
+                      {i === 2 ? (
+                        <>
+                          people{" "}
+                          <span className="text-white/30 italic">love.</span>
+                        </>
+                      ) : (
+                        line
+                      )}
+                    </motion.span>
+                  </span>
+                ))}
+              </h1>
 
-          {/* Dynamic Subheadline */}
-          <div className="text-mask mb-14 inline-block">
-            <div className="h-8 md:h-12 overflow-hidden relative animate-mask-up" style={{ animationDelay: "0.6s" }}>
+              {/* Sub-label */}
               <motion.div
-                animate={{ y: [0, -48, -96, 0] }}
-                transition={{ duration: 9, repeat: Infinity, times: [0, 0.33, 0.66, 1], ease: "circIn" }}
-                className="flex flex-col items-center"
+                className="space-y-1 pl-1"
+                initial={prefersReducedMotion ? {} : { opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.62, ease: EXPO }}
               >
-                <p className="text-xl md:text-2xl text-white/60 font-light h-12 flex items-center">Crafting brands that dominate.</p>
-                <p className="text-xl md:text-2xl text-white/60 font-light h-12 flex items-center">Building experiences that scale.</p>
-                <p className="text-xl md:text-2xl text-white/60 font-light h-12 flex items-center">Designing the future of web.</p>
+                <p className="text-white/50 text-base md:text-lg font-light tracking-[0.02em]">
+                  Design + development studio
+                </p>
+                <p className="text-white/25 text-sm font-light tracking-[0.02em]">
+                  Based globally. Built precisely.
+                </p>
+              </motion.div>
+
+              {/* CTAs */}
+              <motion.div
+                className="flex flex-wrap items-center gap-5 pl-1"
+                initial={prefersReducedMotion ? {} : { opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.75, ease: EXPO }}
+              >
+                <motion.div whileTap={{ scale: 0.97 }} style={{ transition: "transform 160ms ease-out" }}>
+                  <Link
+                    to="/start-project"
+                    className="group inline-flex items-center gap-2.5 bg-white text-black px-7 py-3.5 rounded-full text-sm font-medium"
+                    style={{ transition: "background-color 200ms ease-out" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.88)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "white")}
+                  >
+                    Start a Project
+                    <ArrowRight
+                      className="w-3.5 h-3.5"
+                      style={{ transition: "transform 200ms ease-out" }}
+                      onMouseEnter={(e) => ((e.currentTarget as SVGElement).style.transform = "translateX(2px)")}
+                    />
+                  </Link>
+                </motion.div>
+
+                <Link
+                  to="/work"
+                  className="text-sm text-white/40 hover:text-white/80 underline underline-offset-4 decoration-white/15 hover:decoration-white/40"
+                  style={{ transition: "color 200ms ease-out, text-decoration-color 200ms ease-out" }}
+                >
+                  View our work
+                </Link>
               </motion.div>
             </div>
-          </div>
 
-          {/* CTAs */}
-          <motion.div
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-            style={{
-              transform: `translateZ(${useTransform(depth, [0, 0.3], [0, -15])}px)`,
-            }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
+            {/* Right: Reel card — spring-tracked 3D tilt */}
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative group"
+              ref={reelRef}
+              className="hidden lg:block mt-4 self-start"
+              initial={prefersReducedMotion ? {} : { opacity: 0, scale: 0.92, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.05, ease: EXPO }}
+              style={
+                prefersReducedMotion
+                  ? {}
+                  : {
+                      rotateX: reelRotateX,
+                      rotateY: reelRotateY,
+                      transformStyle: "preserve-3d",
+                      transformPerspective: 800,
+                    }
+              }
             >
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-white/50 to-white/20 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
-              <Button
-                size="lg"
-                className="relative bg-white text-black hover:bg-white/90 px-8 py-6 rounded-full text-lg font-medium"
-              >
-                <span>Start Your Project</span>
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </motion.div>
+              <div className="w-full aspect-square rounded-2xl border border-white/8 bg-white/[0.025] backdrop-blur-xl overflow-hidden relative cursor-pointer group">
+                {/* Abstract background pattern */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse at 30% 40%, hsl(0 0% 16% / 0.8), transparent 60%), radial-gradient(ellipse at 70% 70%, hsl(0 0% 10% / 0.6), transparent 50%)",
+                  }}
+                />
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white/20 hover:bg-white/10 hover:text-white px-8 py-6 rounded-full text-lg font-medium backdrop-blur-sm"
-              >
-                View Our Work
-              </Button>
-            </motion.div>
-          </motion.div>
+                {/* Corner label */}
+                <div className="absolute top-5 left-5 font-mono text-[10px] text-white/20 uppercase tracking-widest">
+                  Reel 2025
+                </div>
 
-          {/* Micro Proof & Stats */}
-          <motion.div
-            className="mt-24 pt-10 border-t border-white/10 grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.8 }}
-          >
-            {[
-              { label: "Projects Delivered", value: "150+" },
-              { label: "Client Satisfaction", value: "99%" },
-              { label: "Global Partners", value: "50+" },
-              { label: "Industry Awards", value: "12" },
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-3xl font-heading font-medium text-white mb-2">{stat.value}</div>
-                <div className="text-sm text-white/50 uppercase tracking-widest">{stat.label}</div>
+                {/* Top-right year */}
+                <div className="absolute top-5 right-5 font-mono text-[10px] text-white/15 uppercase tracking-widest">
+                  01 / 01
+                </div>
+
+                {/* Play button */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                  <div
+                    className="w-14 h-14 rounded-full border border-white/15 bg-white/5 flex items-center justify-center group-hover:border-white/35 group-hover:bg-white/10"
+                    style={{ transition: "border-color 250ms ease-out, background-color 250ms ease-out" }}
+                  >
+                    <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                  </div>
+                  <div className="text-center">
+                    <div className="text-[11px] text-white/25 uppercase tracking-[0.2em] mb-1">Studio Reel</div>
+                    <div className="text-sm text-white/45 font-light">3 min 24 sec</div>
+                  </div>
+                </div>
+
+                {/* Hover glow */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none"
+                  style={{
+                    background: "radial-gradient(circle at 50% 50%, hsl(0 0% 100% / 0.04), transparent 65%)",
+                    transition: "opacity 400ms ease-out",
+                  }}
+                />
+
+                {/* Electric accent line at bottom */}
+                <div
+                  className="absolute bottom-0 left-0 h-[1px] w-0 bg-electric group-hover:w-full"
+                  style={{ transition: "width 400ms cubic-bezier(0.16, 1, 0.3, 1)" }}
+                />
               </div>
-            ))}
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </motion.div>
 
-      {/* Enhanced Scroll Indicator */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-float-subtle">
-        <motion.div
-          style={{
-            opacity: useTransform(depth, [0, 0.1], [1, 0]),
-          }}
-          className="flex flex-col items-center gap-3"
-        >
-          <span className="text-[10px] uppercase tracking-[0.3em] text-white/30">Scroll</span>
-          <div className="w-[1px] h-12 bg-white/10 relative overflow-hidden">
-            <motion.div
-              className="absolute top-0 left-0 w-full h-1/2 bg-white/50"
-              animate={{ y: ["-100%", "200%"] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-            />
+      {/* Bottom marquee strip */}
+      <div className="relative z-10 border-t border-white/[0.06] overflow-hidden">
+        <div className="flex py-4">
+          <div className="flex shrink-0 animate-marquee">
+            {MARQUEE_ITEMS.map((item, i) => (
+              <span
+                key={i}
+                className="text-[10px] text-white/18 uppercase tracking-[0.28em] whitespace-nowrap px-6"
+              >
+                {item}
+                <span className="ml-6 text-white/10">·</span>
+              </span>
+            ))}
           </div>
-        </motion.div>
+          {/* Duplicate for seamless loop */}
+          <div className="flex shrink-0 animate-marquee" aria-hidden="true">
+            {MARQUEE_ITEMS.map((item, i) => (
+              <span
+                key={i}
+                className="text-[10px] text-white/18 uppercase tracking-[0.28em] whitespace-nowrap px-6"
+              >
+                {item}
+                <span className="ml-6 text-white/10">·</span>
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-20 right-8 z-10 hidden lg:flex flex-col items-center gap-3"
+        style={prefersReducedMotion ? {} : { opacity: scrollIndicatorOpacity }}
+      >
+        <div className="w-[1px] h-10 bg-white/10 relative overflow-hidden">
+          <motion.div
+            className="absolute top-0 left-0 w-full h-1/2 bg-white/40"
+            animate={{ y: ["-100%", "200%"] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
+          />
+        </div>
+        <span className="text-[9px] uppercase tracking-[0.3em] text-white/20">Scroll</span>
+      </motion.div>
     </section>
   );
 };

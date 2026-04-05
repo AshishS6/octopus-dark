@@ -1,84 +1,143 @@
-import { CheckCircle2 } from "lucide-react";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
-const WhoWeAre = () => {
-  const highlights = [
-    "Award-Winning Creative Team",
-    "Data-Driven Strategies",
-    "ROI-Focused Approach"
-  ];
+const STATS = [
+  { value: "150+", label: "Projects Delivered" },
+  { value: "7", label: "Years of Practice" },
+  { value: "99%", label: "Client Retention" },
+];
+
+const EXPO = [0.16, 1, 0.3, 1] as const;
+
+// Reusable scroll-triggered line reveal
+const RevealLine = ({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="py-24 md:py-32 relative overflow-hidden bg-background">
-      {/* Sleek Dark Background Setup */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background"></div>
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)`,
-            backgroundSize: '4rem 4rem'
-          }}
-        ></div>
-      </div>
+    <div ref={ref} className={`overflow-hidden ${className}`}>
+      <motion.div
+        initial={prefersReducedMotion ? {} : { y: "108%", opacity: 0 }}
+        animate={inView ? { y: "0%", opacity: 1 } : {}}
+        transition={{ duration: 0.85, delay, ease: EXPO }}
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+};
+
+const WhoWeAre = () => {
+  const statsRef = useRef<HTMLDivElement>(null);
+  const statsInView = useInView(statsRef, { once: true, margin: "-60px" });
+  const prefersReducedMotion = useReducedMotion();
+
+  return (
+    <section id="about" className="py-32 md:py-44 relative bg-background overflow-hidden">
+      {/* Subtle grid overlay */}
+      <div
+        className="absolute inset-0 z-0 opacity-[0.018] pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)`,
+          backgroundSize: "5rem 5rem",
+        }}
+      />
 
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left Content */}
-          <div className="space-y-6 animate-fade-up">
-            <div className="inline-block">
-              <span className="text-sm font-medium text-white/50 uppercase tracking-widest">Who We Are</span>
+        <div className="grid lg:grid-cols-[1fr_260px] gap-16 lg:gap-20 items-start">
+
+          {/* Manifesto — left */}
+          <div className="max-w-3xl">
+            {/* Section label */}
+            <RevealLine className="mb-10">
+              <span className="font-mono text-[11px] text-white/25 uppercase tracking-[0.25em]">
+                Studio
+              </span>
+            </RevealLine>
+
+            {/* First statement */}
+            <div className="space-y-0">
+              <RevealLine delay={0.05}>
+                <p className="font-display text-[clamp(2rem,5.5vw,4rem)] font-normal leading-[1.1] text-white/85">
+                  In a world where everyone's
+                </p>
+              </RevealLine>
+              <RevealLine delay={0.11}>
+                <p className="font-display text-[clamp(2rem,5.5vw,4rem)] font-normal leading-[1.1] text-white/85">
+                  software is good enough —
+                </p>
+              </RevealLine>
             </div>
 
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-medium leading-tight text-white tracking-tight">
-              A creative studio where strategy, design, and technology converge.
-            </h2>
-
-            <p className="text-lg text-white/60 leading-relaxed font-light">
-              We work with ambitious startups and global brands that want more than just aesthetics — they demand <strong className="text-white font-medium">clarity, consistency, and scalable results</strong>.
-            </p>
-
-            <p className="text-lg text-white/60 leading-relaxed font-light">
-              From shaping iconic brand identities to engineering high-performance web applications and launching data-driven campaigns, we approach every project with uncompromising precision and intent.
-            </p>
-
-            {/* Highlights */}
-            <div className="space-y-4 pt-6">
-              {[
-                "Strategy-first creative thinking",
-                "Design that communicates, not decorates",
-                "Technology engineered for scale"
-              ].map((highlight, index) => (
-                <div key={index} className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full border border-white/20 flex items-center justify-center bg-white/5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                  </div>
-                  <span className="text-white/80 font-light tracking-wide">{highlight}</span>
-                </div>
-              ))}
+            {/* Pause / divider */}
+            <div className="my-8 overflow-hidden">
+              <motion.div
+                className="h-[1px] bg-white/10"
+                initial={prefersReducedMotion ? {} : { scaleX: 0, transformOrigin: "left" }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.7, delay: 0.2, ease: EXPO }}
+              />
             </div>
+
+            {/* Punchline */}
+            <RevealLine delay={0.08}>
+              <p className="font-display italic text-[clamp(2.2rem,6vw,4.5rem)] font-normal leading-[1.08] text-white">
+                Taste is the differentiator.
+              </p>
+            </RevealLine>
+
+            {/* Body */}
+            <motion.div
+              className="mt-10 space-y-4 max-w-xl"
+              initial={prefersReducedMotion ? {} : { opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.6, delay: 0.15, ease: EXPO }}
+            >
+              <p className="text-white/45 font-light text-lg leading-relaxed">
+                We're a design and development studio that builds things people love —
+                not just things that work.
+              </p>
+              <p className="text-white/35 font-light text-base leading-relaxed">
+                Every project starts with the uncomfortable question: what does this
+                actually need to do? From that answer, we design, engineer, and
+                ship with uncompromising precision.
+              </p>
+            </motion.div>
           </div>
 
-          {/* Right Visual - Value Proposition / Proof Card */}
-          <div className="relative animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <div className="relative aspect-square rounded-3xl overflow-hidden bg-white/[0.02] border border-white/10 backdrop-blur-xl">
-              {/* Abstract subtle glow */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-[120%] h-[120%] bg-white/[0.03] rounded-full blur-[100px]"></div>
-              </div>
-
-              {/* Content overlay */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center">
-                <div className="text-7xl md:text-8xl font-heading font-light text-white mb-6 tracking-tighter">100<span className="text-white/40">%</span></div>
-                <div className="text-xl md:text-2xl font-light text-white mb-4 tracking-wide">Client Satisfaction</div>
-                <div className="w-12 h-px bg-white/20 mb-6"></div>
-                <p className="text-white/50 max-w-[280px] mx-auto font-light leading-relaxed">
-                  Built on long-term partnerships, not one-off projects. We measure success by tangible business outcomes.
-                </p>
-              </div>
-            </div>
-
-            {/* Decorative subtle border glow */}
-            <div className="absolute -inset-0.5 bg-gradient-to-b from-white/10 to-transparent rounded-3xl blur-sm opacity-50 -z-10"></div>
+          {/* Stats — right */}
+          <div ref={statsRef} className="lg:pt-20 space-y-8">
+            {STATS.map((stat, i) => (
+              <motion.div
+                key={i}
+                className="border-b border-white/6 pb-8 last:border-0"
+                initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
+                animate={statsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.1 + i * 0.1,
+                  ease: EXPO,
+                }}
+              >
+                <div className="font-display text-[3.5rem] font-normal text-white leading-none mb-2 tracking-tight">
+                  {stat.value}
+                </div>
+                <div className="text-xs text-white/30 uppercase tracking-[0.2em] font-light">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>

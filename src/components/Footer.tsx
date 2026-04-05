@@ -1,132 +1,138 @@
-import { Facebook, Twitter, Instagram, Linkedin, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
+
+const STUDIO_LINKS = [
+  { label: "Work", href: "/work" },
+  { label: "Services", href: "/services" },
+  { label: "Team", href: "/#team" },
+  { label: "Start a Project", href: "/start-project" },
+];
+
+const CONNECT_LINKS = [
+  { label: "Twitter", href: "#" },
+  { label: "Instagram", href: "#" },
+  { label: "LinkedIn", href: "#" },
+  { label: "Dribbble", href: "#" },
+];
+
+const LEGAL_LINKS = [
+  { label: "Privacy", href: "#" },
+  { label: "Terms", href: "#" },
+];
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
-  const footerLinks = {
-    company: [
-      { label: "About Us", href: "#about" },
-      { label: "Services", href: "#services" },
-      { label: "Work", href: "#work" },
-      { label: "Team", href: "#team" }
-    ],
-    services: [
-      { label: "Branding", href: "#services" },
-      { label: "Web Development", href: "#services" },
-      { label: "Advertisement", href: "#services" },
-      { label: "Social Media", href: "#services" }
-    ],
-    contact: [
-      { label: "Contact Us", href: "#contact" },
-      { label: "Careers", href: "#careers" },
-      { label: "Support", href: "#support" },
-      { label: "FAQ", href: "#faq" }
-    ]
-  };
-
-  const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Mail, href: "#", label: "Email" }
-  ];
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-secondary/20 border-t border-border">
-      <div className="container mx-auto px-6 lg:px-12 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Brand Column */}
-          <div>
-            <h3 className="text-2xl font-heading font-bold text-primary mb-4">
-              Octopus<span className="text-accent">Media</span>
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Octopus Media — A creative studio inspired by depth, adaptability, and imagination.
+    <footer className="border-t border-white/[0.06] bg-background">
+      <div className="container mx-auto px-6 lg:px-12">
+
+        {/* Main grid */}
+        <div className="py-16 grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8">
+
+          {/* Brand column */}
+          <div className="col-span-2 md:col-span-1 space-y-4">
+            <Link
+              to="/"
+              className="font-display text-lg text-white/80 hover:text-white inline-block"
+              style={{ transition: "color 200ms ease-out" }}
+            >
+              Octopus<span className="text-white/25">°</span>
+            </Link>
+            <p className="text-xs text-white/25 font-light leading-relaxed max-w-[180px]">
+              Design + development studio. Building things people love.
             </p>
-            <div className="flex gap-3">
-              {socialLinks.map((social, index) => (
-                <a
-                  key={index}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="w-10 h-10 rounded-full bg-card border border-border hover:border-primary flex items-center justify-center transition-all duration-300 hover:scale-110"
-                >
-                  <social.icon className="w-5 h-5 text-muted-foreground hover:text-primary transition-colors" />
-                </a>
-              ))}
+            <div className="font-mono text-[10px] text-white/15 uppercase tracking-widest">
+              Est. 2019
             </div>
           </div>
 
-          {/* Company Links */}
-          <div>
-            <h4 className="font-heading font-semibold text-foreground mb-4">Company</h4>
+          {/* Studio links */}
+          <div className="space-y-5">
+            <div className="font-mono text-[10px] text-white/20 uppercase tracking-[0.2em]">Studio</div>
             <ul className="space-y-3">
-              {footerLinks.company.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href={link.href}
-                    className="text-muted-foreground hover:text-primary transition-colors"
+              {STUDIO_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    to={link.href}
+                    className="text-sm text-white/35 hover:text-white/70"
+                    style={{ transition: "color 200ms ease-out" }}
                   >
                     {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Connect links */}
+          <div className="space-y-5">
+            <div className="font-mono text-[10px] text-white/20 uppercase tracking-[0.2em]">Connect</div>
+            <ul className="space-y-3">
+              {CONNECT_LINKS.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    className="group inline-flex items-center gap-1 text-sm text-white/35 hover:text-white/70"
+                    style={{ transition: "color 200ms ease-out" }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {link.label}
+                    <ArrowUpRight
+                      className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
+                      style={{ transition: "all 200ms ease-out" }}
+                    />
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Services Links */}
-          <div>
-            <h4 className="font-heading font-semibold text-foreground mb-4">Services</h4>
-            <ul className="space-y-3">
-              {footerLinks.services.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href={link.href}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Links */}
-          <div>
-            <h4 className="font-heading font-semibold text-foreground mb-4">Contact</h4>
-            <ul className="space-y-3">
-              {footerLinks.contact.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href={link.href}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          {/* Contact */}
+          <div className="space-y-5">
+            <div className="font-mono text-[10px] text-white/20 uppercase tracking-[0.2em]">Contact</div>
+            <div className="space-y-3">
+              <div>
+                <div className="text-[10px] text-white/15 uppercase tracking-widest mb-1 font-mono">Email</div>
+                <a
+                  href="mailto:hello@octopus.studio"
+                  className="text-sm text-white/35 hover:text-white/70"
+                  style={{ transition: "color 200ms ease-out" }}
+                >
+                  hello@octopus.studio
+                </a>
+              </div>
+              <div>
+                <div className="text-[10px] text-white/15 uppercase tracking-widest mb-1 font-mono">New business</div>
+                <a
+                  href="mailto:work@octopus.studio"
+                  className="text-sm text-white/35 hover:text-white/70"
+                  style={{ transition: "color 200ms ease-out" }}
+                >
+                  work@octopus.studio
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-border">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-muted-foreground text-center md:text-left">
-              © {currentYear} Octopus Media. All rights reserved.
-            </p>
-            <div className="flex gap-6 text-sm">
-              <a href="#privacy" className="text-muted-foreground hover:text-primary transition-colors">
-                Privacy Policy
+        {/* Bottom bar */}
+        <div className="py-6 border-t border-white/[0.05] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span className="font-mono text-[10px] text-white/15 uppercase tracking-widest">
+            © {year} Octopus Studio
+          </span>
+          <div className="flex items-center gap-6">
+            {LEGAL_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="font-mono text-[10px] text-white/15 hover:text-white/35 uppercase tracking-widest"
+                style={{ transition: "color 200ms ease-out" }}
+              >
+                {link.label}
               </a>
-              <a href="#terms" className="text-muted-foreground hover:text-primary transition-colors">
-                Terms of Service
-              </a>
-              <a href="#cookies" className="text-muted-foreground hover:text-primary transition-colors">
-                Cookie Policy
-              </a>
-            </div>
+            ))}
           </div>
         </div>
       </div>

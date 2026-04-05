@@ -1,51 +1,43 @@
 import { lazy, Suspense } from "react";
-import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
-import { DepthProvider } from "@/context/DepthProvider";
+import SignalMarquee from "@/components/SignalMarquee";
 
-// Lazy load below-the-fold components for better initial load performance
+// Navigation and Footer are provided by MainLayout — do not import them here.
+
+// Lazy-load below-the-fold sections
 const WhoWeAre = lazy(() => import("@/components/WhoWeAre"));
 const Services = lazy(() => import("@/components/Services"));
 const WorkSamples = lazy(() => import("@/components/WorkSamples"));
 const ClientsMarquee = lazy(() => import("@/components/ClientsMarquee"));
 const Team = lazy(() => import("@/components/Team"));
 const ContactCTA = lazy(() => import("@/components/ContactCTA"));
-const Footer = lazy(() => import("@/components/Footer"));
 
-// Loading fallback component
-const SectionLoader = () => (
-  <div className="min-h-[400px] flex items-center justify-center">
-    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-  </div>
+// Minimal loader — avoids layout shift
+const SectionLoader = () => <div className="min-h-[200px]" />;
+
+const Index = () => (
+  <>
+    <Hero />
+    <SignalMarquee />
+    <Suspense fallback={<SectionLoader />}>
+      <WhoWeAre />
+    </Suspense>
+    <Suspense fallback={<SectionLoader />}>
+      <WorkSamples />
+    </Suspense>
+    <Suspense fallback={<SectionLoader />}>
+      <Services />
+    </Suspense>
+    <Suspense fallback={<SectionLoader />}>
+      <ClientsMarquee />
+    </Suspense>
+    <Suspense fallback={<SectionLoader />}>
+      <Team />
+    </Suspense>
+    <Suspense fallback={<SectionLoader />}>
+      <ContactCTA />
+    </Suspense>
+  </>
 );
-
-// Purpose: Prove credibility through real-world outcomes
-
-const Index = () => {
-  return (
-    <div className="min-h-screen">
-      <Hero />
-      {/* Lazy loaded sections with suspense */}
-      <Suspense fallback={<SectionLoader />}>
-        <WhoWeAre />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <Services />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <WorkSamples />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <ClientsMarquee />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <Team />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <ContactCTA />
-      </Suspense>
-    </div>
-  );
-};
 
 export default Index;

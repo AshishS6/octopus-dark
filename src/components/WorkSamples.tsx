@@ -1,91 +1,238 @@
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useRef } from "react";
+import { motion, useInView, useSpring, useTransform, useReducedMotion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const WorkSamples = () => {
-  const [filter, setFilter] = useState("all");
+const PROJECTS = [
+  {
+    number: "01",
+    title: "Apex Brand Identity",
+    category: "Branding",
+    description: "Complete visual identity system for a Series B fintech startup.",
+    year: "2025",
+    // Gradient as placeholder — replace with real images later
+    bg: "linear-gradient(135deg, hsl(0 0% 10%) 0%, hsl(0 0% 7%) 50%, hsl(20 8% 9%) 100%)",
+    accent: "hsl(35 80% 55%)",
+    slug: "apex-brand-identity",
+  },
+  {
+    number: "02",
+    title: "Nexus Commerce",
+    category: "Web Development",
+    description: "High-performance e-commerce platform serving 2M+ monthly users.",
+    year: "2024",
+    bg: "linear-gradient(135deg, hsl(220 15% 9%) 0%, hsl(220 10% 6%) 50%, hsl(210 12% 10%) 100%)",
+    accent: "hsl(210 80% 60%)",
+    slug: "nexus-commerce",
+  },
+  {
+    number: "03",
+    title: "Pulse Motion System",
+    category: "Motion & Interaction",
+    description: "Animation framework and component library for enterprise SaaS.",
+    year: "2024",
+    bg: "linear-gradient(135deg, hsl(260 10% 9%) 0%, hsl(260 8% 6%) 50%, hsl(270 10% 10%) 100%)",
+    accent: "hsl(265 60% 65%)",
+    slug: "pulse-motion-system",
+  },
+];
 
-  const categories = ["all", "branding", "web", "advertising", "social"];
+const EXPO = [0.16, 1, 0.3, 1] as const;
 
-  const projects = [
-    { id: 1, title: "Brand Identity Design", category: "branding", image: "bg-white/5" },
-    { id: 2, title: "E-commerce Platform", category: "web", image: "bg-white/10" },
-    { id: 3, title: "Digital Campaign", category: "advertising", image: "bg-white/[0.08]" },
-    { id: 4, title: "Social Media Strategy", category: "social", image: "bg-white/5" },
-    { id: 5, title: "Corporate Website", category: "web", image: "bg-white/[0.03]" },
-    { id: 6, title: "Brand Guidelines", category: "branding", image: "bg-white/[0.07]" },
-  ];
+// Individual project row with mouse-tracking 3D tilt
+const ProjectRow = ({
+  project,
+  index,
+  inView,
+}: {
+  project: (typeof PROJECTS)[0];
+  index: number;
+  inView: boolean;
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
-  const filteredProjects = filter === "all"
-    ? projects
-    : projects.filter(project => project.category === filter);
+  const rawX = useSpring(0, { stiffness: 100, damping: 30 });
+  const rawY = useSpring(0, { stiffness: 100, damping: 30 });
+  const rotateX = useTransform(rawY, [-0.4, 0.4], [3, -3]);
+  const rotateY = useTransform(rawX, [-0.4, 0.4], [-4, 4]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (prefersReducedMotion || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    rawX.set((e.clientX - rect.left - rect.width / 2) / rect.width);
+    rawY.set((e.clientY - rect.top - rect.height / 2) / rect.height);
+  };
+
+  const handleMouseLeave = () => {
+    rawX.set(0);
+    rawY.set(0);
+  };
 
   return (
-    <section id="work" className="py-24 md:py-32 relative bg-background">
+    <motion.article
+      className="group"
+      initial={prefersReducedMotion ? {} : { opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay: 0.1 + index * 0.12, ease: EXPO }}
+    >
+      {/* Project image */}
+      <motion.div
+        ref={containerRef}
+        className="relative w-full overflow-hidden rounded-xl cursor-pointer mb-6"
+        style={
+          prefersReducedMotion
+            ? {}
+            : { rotateX, rotateY, transformStyle: "preserve-3d", transformPerspective: 1000 }
+        }
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        <Link to={`/work/${project.slug}`}>
+          <div
+            className="w-full aspect-[16/9] md:aspect-[21/9]"
+            style={{ background: project.bg }}
+          >
+            {/* Overlay grid lines (design-y feel for placeholder) */}
+            <div
+              className="absolute inset-0 opacity-[0.04]"
+              style={{
+                backgroundImage: `linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)`,
+                backgroundSize: "4rem 4rem",
+              }}
+            />
+
+            {/* Accent glow in corner */}
+            <div
+              className="absolute bottom-0 right-0 w-[40%] h-[60%] opacity-20"
+              style={{
+                background: `radial-gradient(circle at 80% 80%, ${project.accent}, transparent 65%)`,
+                filter: "blur(30px)",
+              }}
+            />
+
+            {/* Project number — large watermark */}
+            <div className="absolute top-6 left-8 font-mono text-[11px] text-white/20 uppercase tracking-widest">
+              {project.number}
+            </div>
+
+            {/* Year */}
+            <div className="absolute top-6 right-8 font-mono text-[11px] text-white/15 uppercase tracking-widest">
+              {project.year}
+            </div>
+
+            {/* Hover overlay */}
+            <div
+              className="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100"
+              style={{ transition: "opacity 350ms ease-out" }}
+            />
+
+            {/* View link — appears on hover */}
+            <div
+              className="absolute bottom-6 right-8 flex items-center gap-2 text-sm text-white/50 group-hover:text-white opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0"
+              style={{ transition: "all 300ms cubic-bezier(0.16, 1, 0.3, 1)" }}
+            >
+              View Case Study
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Electric accent line at bottom — draws on hover */}
+          <div
+            className="absolute bottom-0 left-0 h-[1.5px] w-0 group-hover:w-full"
+            style={{
+              background: project.accent,
+              transition: "width 500ms cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          />
+        </Link>
+      </motion.div>
+
+      {/* Project meta */}
+      <div className="flex items-start justify-between gap-4 px-1">
+        <div>
+          <div className="flex items-center gap-3 mb-1">
+            <span className="font-mono text-[10px] text-white/20 uppercase tracking-widest">
+              {project.category}
+            </span>
+          </div>
+          <h3 className="font-display text-xl md:text-2xl font-normal text-white/80 group-hover:text-white"
+            style={{ transition: "color 200ms ease-out" }}>
+            {project.title}
+          </h3>
+          <p className="text-sm text-white/35 font-light mt-1">{project.description}</p>
+        </div>
+        <Link
+          to={`/work/${project.slug}`}
+          className="shrink-0 w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-white/25 hover:border-white/30 hover:text-white/70 mt-1"
+          style={{ transition: "all 200ms ease-out" }}
+          aria-label={`View ${project.title}`}
+        >
+          <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      </div>
+    </motion.article>
+  );
+};
+
+const WorkSamples = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: "-80px" });
+  const prefersReducedMotion = useReducedMotion();
+
+  return (
+    <section id="work" ref={sectionRef} className="py-32 md:py-44 relative bg-background">
       <div className="container mx-auto px-6 lg:px-12">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-up">
-          <span className="text-sm font-medium text-white/50 uppercase tracking-widest">Portfolio</span>
-          <h2 className="text-4xl md:text-5xl lg:text-7xl font-heading font-medium mt-4 mb-6 tracking-tight text-white">
-            Selected Work
-          </h2>
-          <p className="text-lg text-white/50 font-light">
-            A curated selection of our finest engineered experiences and strategic brand identities.
-          </p>
-        </div>
 
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap justify-center gap-3 mb-16 animate-fade-in">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={filter === category ? "default" : "outline"}
-              onClick={() => setFilter(category)}
-              className={filter === category
-                ? "bg-white text-black hover:bg-white/90 rounded-full px-6"
-                : "border-white/20 text-white hover:bg-white/10 rounded-full px-6 font-light"}
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 border-b border-white/6 pb-12">
+          <div>
+            <div className="overflow-hidden mb-5">
+              <motion.span
+                className="font-mono text-[11px] text-white/25 uppercase tracking-[0.25em] block"
+                initial={prefersReducedMotion ? {} : { y: "110%", opacity: 0 }}
+                animate={inView ? { y: "0%", opacity: 1 } : {}}
+                transition={{ duration: 0.6, ease: EXPO }}
+              >
+                Selected Work
+              </motion.span>
+            </div>
+            <div className="overflow-hidden">
+              <motion.h2
+                className="font-display text-[clamp(2rem,5vw,3.5rem)] font-normal text-white"
+                initial={prefersReducedMotion ? {} : { y: "108%", opacity: 0 }}
+                animate={inView ? { y: "0%", opacity: 1 } : {}}
+                transition={{ duration: 0.8, delay: 0.06, ease: EXPO }}
+              >
+                The work speaks.
+              </motion.h2>
+            </div>
+          </div>
+
+          <motion.div
+            initial={prefersReducedMotion ? {} : { opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.25, ease: "easeOut" }}
+          >
+            <Link
+              to="/work"
+              className="group inline-flex items-center gap-2 text-sm text-white/35 hover:text-white/70"
+              style={{ transition: "color 200ms ease-out" }}
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </Button>
-          ))}
+              View all projects
+              <ArrowUpRight
+                className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                style={{ transition: "transform 200ms ease-out" }}
+              />
+            </Link>
+          </motion.div>
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {filteredProjects.map((project, index) => (
-            <Card
-              key={project.id}
-              className="group relative overflow-hidden bg-white/[0.02] border border-white/10 hover:border-white/30 transition-all duration-700 animate-scale-in cursor-pointer rounded-2xl"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              {/* Project Image Placeholder */}
-              <div className={`aspect-[4/3] ${project.image} relative overflow-hidden transition-transform duration-700 group-hover:scale-105`}>
-
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-700"></div>
-
-                {/* Content */}
-                <div className="absolute inset-0 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                  <span className="text-xs font-medium text-white/50 uppercase tracking-widest mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                    {project.category}
-                  </span>
-                  <h3 className="text-2xl font-heading font-medium text-white opacity-90 group-hover:opacity-100 transition-opacity duration-500 delay-150">
-                    {project.title}
-                  </h3>
-
-                  {/* Subtle underline indicator instead of loud CTA */}
-                  <div className="w-0 h-px bg-white mt-4 group-hover:w-12 transition-all duration-700 ease-out delay-200"></div>
-                </div>
-              </div>
-            </Card>
+        {/* Projects — stacked full-width */}
+        <div className="space-y-20 md:space-y-28">
+          {PROJECTS.map((project, i) => (
+            <ProjectRow key={project.slug} project={project} index={i} inView={inView} />
           ))}
-        </div>
-
-        {/* CTA */}
-        <div className="text-center mt-20 animate-fade-up">
-          <Button size="lg" variant="outline" className="border-white/20 hover:bg-white/10 hover:text-white rounded-full px-8 py-6 font-light">
-            View All Projects
-          </Button>
         </div>
       </div>
     </section>

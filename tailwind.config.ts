@@ -14,8 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
+        display: ["DM Serif Display", "serif"],
         heading: ["Plus Jakarta Sans", "sans-serif"],
         body: ["Inter", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -42,6 +44,10 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+        },
+        electric: {
+          DEFAULT: "hsl(var(--electric))",
+          foreground: "hsl(0 0% 0%)",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -94,6 +100,18 @@ export default {
           "0%": { transform: "translateX(0%)" },
           "100%": { transform: "translateX(-50%)" },
         },
+        "marquee-reverse": {
+          "0%": { transform: "translateX(-50%)" },
+          "100%": { transform: "translateX(0%)" },
+        },
+        "line-draw": {
+          "0%": { transform: "scaleX(0)", transformOrigin: "left" },
+          "100%": { transform: "scaleX(1)", transformOrigin: "left" },
+        },
+        "count-up": {
+          "0%": { opacity: "0", transform: "translateY(12px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.3s ease-out",
@@ -104,7 +122,10 @@ export default {
         "slide-in-right": "slide-in-right 0.6s ease-out",
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         "float": "float 6s ease-in-out infinite",
-        "marquee": "marquee 40s linear infinite",
+        "marquee": "marquee 35s linear infinite",
+        "marquee-reverse": "marquee-reverse 35s linear infinite",
+        "line-draw": "line-draw 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "count-up": "count-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
       },
     },
   },
